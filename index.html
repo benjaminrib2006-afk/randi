@@ -298,7 +298,7 @@
       <div class="phone">
         <img class="shot" src="idk.jpg" alt="Esti pillanat a teraszon">
       </div>
-      <div class="label">Szerencsére egy pár centivel magasabb vagyok nálad</div>
+      <div class="label">Ez a kép bizonyítja, hogy magasabb vagyok nálad</div>
     </div></div>
   </section>
 
@@ -307,7 +307,7 @@
       <div class="camera">
         <img class="shot" src="melo.jpg" alt="Kártyaparti a parton">
       </div>
-      <div class="label">Meglátogattunk munka közben is</div>
+      <div class="label">Meglátogattalak munka közben is</div>
     </div></div>
   </section>
 
@@ -317,7 +317,7 @@
         <img class="shot" src="csaladi.jpg" alt="Ölelés a kertben">
         <div class="scribble">ezt bekereteztem ✎</div>
       </div>
-      <div class="label">Mert nagyon cuki ez a kép</div>
+      <div class="label">Mert nagyonn cuki kép</div>
     </div></div>
   </section>
 
@@ -326,7 +326,7 @@
       <div class="mirror">
         <img class="shot" src="tukor.jpg" alt="Tükörszelfi hármasban">
       </div>
-      <div class="label">Ez am nem tudom mi volt de cuki ez is</div>
+      <div class="label">fene se tudja mi ez, de cuki ez is</div>
     </div></div>
   </section>
 
@@ -356,7 +356,7 @@
   </div>
   <h2>Nem igazán volt más lehetőséged😆</h2>
   <p>Hívj fel és beszéljük meg, hogy melyik napra tegyük</p>
-  <a href="tel:+36202704009">+36 20 270 4009</a>
+   <a href="tel:+36202704009">+36 20 270 4009</a>
   <div class="stamp">Hivatalosan is randi &middot; pecsét: vau</div>
 </div>
 <canvas id="fx"></canvas>
@@ -492,8 +492,9 @@
     taunt.classList.remove('show');
     score.classList.remove('show');
   }
-no.addEventListener('pointerdown', e => { e.preventDefault(); flee(); });
-no.addEventListener('click', e => e.preventDefault());
+  // A gomb NEM ugrik el hoverre — csak amikor rákattintasz (vagy telón rákoppintasz).
+  no.addEventListener('pointerdown', e => { e.preventDefault(); flee(); });
+  no.addEventListener('click', e => e.preventDefault());
 
   // — Igen: konfetti —
   const fx = document.getElementById('fx'), fctx = fx.getContext('2d');
