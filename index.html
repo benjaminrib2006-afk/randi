@@ -492,15 +492,8 @@
     taunt.classList.remove('show');
     score.classList.remove('show');
   }
-  no.addEventListener('pointerenter', flee);
-  no.addEventListener('pointerdown', e => { e.preventDefault(); flee(); });
-  no.addEventListener('click', e => e.preventDefault());
-  addEventListener('pointermove', e => {
-    if (no.style.display === 'none' || !no.classList.contains('fleeing')) return;
-    const r = no.getBoundingClientRect();
-    if (e.clientX > r.left - 12 && e.clientX < r.right + 12 &&
-        e.clientY > r.top - 12 && e.clientY < r.bottom + 12) flee();
-  });
+no.addEventListener('pointerdown', e => { e.preventDefault(); flee(); });
+no.addEventListener('click', e => e.preventDefault());
 
   // — Igen: konfetti —
   const fx = document.getElementById('fx'), fctx = fx.getContext('2d');
