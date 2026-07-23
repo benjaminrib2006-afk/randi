@@ -1,0 +1,608 @@
+<meta charset="utf-8">
+<title>Egy kis történet…</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{
+    --bg:#0b1026;
+    --ink:#edeaf9;
+    --muted:#9b97c4;
+    --accent:#7c5cff;
+    --hue:260;
+    --mx:50vw; --my:40vh;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:"Avenir Next","Helvetica Neue",system-ui,sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+  }
+  /* fix háttérrétegek */
+  #sky{position:fixed;inset:0;z-index:0;pointer-events:none}
+  .blob{
+    position:fixed;inset:0;z-index:1;pointer-events:none;
+    background:
+      radial-gradient(19rem 19rem at var(--mx) var(--my),
+        hsl(var(--hue) 78% 30% / .8) 0%,
+        hsl(calc(var(--hue) + 35) 70% 18% / .5) 50%,
+        transparent 72%);
+  }
+  .grain{
+    position:fixed;inset:0;z-index:2;pointer-events:none;opacity:.4;
+    background-image:radial-gradient(rgba(255,255,255,.05) 1px, transparent 1px);
+    background-size:22px 22px;
+  }
+  .vignette{
+    position:fixed;inset:0;z-index:3;pointer-events:none;
+    background:radial-gradient(120% 90% at 50% 42%, transparent 55%, rgba(4,6,18,.55) 100%);
+  }
+  main{position:relative;z-index:4}
+
+  /* intro */
+  .intro{
+    height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:1rem;text-align:center;padding:2rem;
+  }
+  .intro h1{
+    margin:0;font-weight:700;letter-spacing:-.02em;
+    font-size:clamp(2rem,5.6vw,3.6rem);max-width:18ch;text-wrap:balance;
+  }
+  .intro p{margin:0;color:var(--muted);font-size:1.02rem}
+  .arrow{
+    margin-top:1.2rem;width:26px;height:26px;
+    border-right:3px solid var(--muted);border-bottom:3px solid var(--muted);
+    transform:rotate(45deg);
+    animation:dip 1.6s ease-in-out infinite;
+  }
+  @keyframes dip{0%,100%{transform:rotate(45deg) translate(0,0)}50%{transform:rotate(45deg) translate(6px,6px)}}
+
+  /* jelenetek */
+  .scene{height:170vh;position:relative}
+  .hold{
+    position:sticky;top:0;height:100vh;
+    display:flex;align-items:center;justify-content:center;
+    overflow:hidden;
+  }
+  .card{
+    will-change:transform,opacity;
+    opacity:0;
+    display:flex;flex-direction:column;align-items:center;gap:1.1rem;
+  }
+  .label{
+    font-size:.76rem;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);
+  }
+
+  /* — eszközkeretek — */
+  .shot{display:block;object-fit:cover;image-orientation:from-image}
+
+  /* retró tévé */
+  .tv{
+    position:relative;
+    background:linear-gradient(180deg,#4a4160,#2c2545);
+    border-radius:18px;
+    padding:22px 22px 30px;
+    box-shadow:0 24px 60px rgba(3,2,14,.7), inset 0 1px 0 rgba(255,255,255,.15);
+  }
+  .tv .shot{
+    width:min(46vh,72vw);aspect-ratio:3/4;
+    border-radius:10px;
+    box-shadow:inset 0 0 40px rgba(0,0,0,.55);
+  }
+  .tv::after{ /* képcső-fény */
+    content:"";position:absolute;inset:22px 22px 30px;border-radius:10px;pointer-events:none;
+    background:
+      repeating-linear-gradient(0deg, rgba(255,255,255,.05) 0 1px, transparent 1px 3px),
+      radial-gradient(120% 90% at 30% 20%, rgba(255,255,255,.14), transparent 55%);
+  }
+  .tv .knobs{
+    position:absolute;right:-14px;top:26%;display:flex;flex-direction:column;gap:12px;
+  }
+  .tv .knobs i{width:16px;height:16px;border-radius:50%;background:#5d5378;box-shadow:inset 0 -2px 4px rgba(0,0,0,.5)}
+  .tv .legs{position:absolute;left:0;right:0;bottom:-16px;display:flex;justify-content:space-between;padding:0 12%}
+  .tv .legs i{width:14px;height:18px;background:#241d3c;border-radius:0 0 6px 6px;transform:skewX(-8deg)}
+  .tv .legs i:last-child{transform:skewX(8deg)}
+
+  /* telefon */
+  .phone{
+    position:relative;
+    background:#151129;
+    border-radius:34px;
+    padding:12px;
+    border:2px solid #3a3358;
+    box-shadow:0 24px 60px rgba(3,2,14,.7), inset 0 1px 0 rgba(255,255,255,.12);
+  }
+  .phone .shot{
+    width:min(38vh,64vw);aspect-ratio:9/16;
+    border-radius:24px;
+  }
+  .phone::before{ /* kamera-sziget */
+    content:"";position:absolute;top:22px;left:50%;transform:translateX(-50%);
+    width:86px;height:22px;border-radius:12px;background:#0a0819;z-index:1;
+  }
+  .phone::after{ /* oldalgomb */
+    content:"";position:absolute;right:-4px;top:24%;width:4px;height:64px;border-radius:2px;background:#3a3358;
+  }
+
+  /* fényképezőgép */
+  .camera{
+    position:relative;
+    background:linear-gradient(180deg,#3b3357,#241e3e);
+    border-radius:16px;
+    padding:44px 22px 22px;
+    box-shadow:0 24px 60px rgba(3,2,14,.7), inset 0 1px 0 rgba(255,255,255,.14);
+  }
+  .camera .shot{
+    width:min(44vh,70vw);aspect-ratio:4/3;
+    border-radius:8px;
+    border:2px solid #14102a;
+  }
+  .camera::before{ /* kereső */
+    content:"";position:absolute;top:12px;left:26px;width:44px;height:22px;
+    border-radius:5px;background:#14102a;box-shadow:inset 0 0 0 2px #4c4370;
+  }
+  .camera::after{ /* exponáló + tárcsa */
+    content:"";position:absolute;top:10px;right:26px;width:70px;height:24px;
+    background:
+      radial-gradient(circle at 12px 12px,#8b78c9 0 10px,transparent 11px),
+      radial-gradient(circle at 52px 12px,#4c4370 0 12px,transparent 13px);
+  }
+
+  /* polaroid */
+  .polaroid{
+    background:#f4f0e8;
+    padding:14px 14px 58px;
+    border-radius:4px;
+    transform:rotate(-2.5deg);
+    box-shadow:0 24px 60px rgba(3,2,14,.7);
+    position:relative;
+  }
+  .polaroid .shot{
+    width:min(44vh,70vw);aspect-ratio:1/1;
+  }
+  .polaroid .scribble{
+    position:absolute;left:0;right:0;bottom:14px;text-align:center;
+    font-family:"Bradley Hand","Comic Sans MS",cursive;
+    color:#4a4152;font-size:1.1rem;
+  }
+
+  /* tükör */
+  .mirror{
+    position:relative;
+    padding:16px;
+    border-radius:26px;
+    background:
+      linear-gradient(140deg,#e8c877,#a97e2f 30%,#f3dc9a 55%,#8f6a24 80%,#dcbb63);
+    box-shadow:0 24px 60px rgba(3,2,14,.7), inset 0 0 12px rgba(80,50,0,.55);
+  }
+  .mirror .shot{
+    width:min(42vh,66vw);aspect-ratio:3/4;
+    border-radius:14px;
+  }
+  .mirror::after{ /* tükörcsillanás */
+    content:"";position:absolute;inset:16px;border-radius:14px;pointer-events:none;
+    background:linear-gradient(115deg, transparent 42%, rgba(255,255,255,.16) 47%, transparent 55%);
+  }
+
+  /* záró jelenet: a kutya */
+  .finale{
+    min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:1.4rem;padding:3rem 2rem 4rem;text-align:center;
+  }
+  .peek{
+    width:clamp(220px,38vmin,360px);
+    display:flex;flex-direction:column;align-items:center;
+    opacity:0;transform:translateY(50px);
+    transition:opacity .6s ease, transform .6s cubic-bezier(.2,.9,.3,1.2);
+  }
+  .finale.on .peek{opacity:1;transform:none}
+  .peekcut{
+    width:100%;overflow:hidden;border-radius:18px;
+    box-shadow:0 20px 48px rgba(4,3,16,.6);
+    border:1px solid rgba(255,255,255,.08);
+  }
+  .peekcut img{
+    width:100%;display:block;image-orientation:from-image;
+    aspect-ratio:500/400;object-fit:cover;object-position:center 32%;
+  }
+  .ledge{display:none}
+  .caption{font-size:.76rem;letter-spacing:.28em;text-transform:uppercase;color:var(--muted)}
+  .finale h2{
+    margin:0;font-weight:700;letter-spacing:-.02em;
+    font-size:clamp(2.2rem,6vw,4rem);line-height:1.1;max-width:16ch;text-wrap:balance;
+  }
+  .sub{margin:0;color:var(--muted);font-size:1.04rem;line-height:1.55;max-width:44ch}
+  .buttons{display:flex;gap:1rem;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:.4rem}
+  button{
+    font:inherit;font-weight:600;font-size:1.08rem;
+    cursor:pointer;border-radius:999px;padding:.95rem 2.5rem;
+    transition:transform .15s ease, box-shadow .2s, font-size .2s, padding .2s;
+  }
+  #yes{background:var(--accent);color:#fff;border:none;box-shadow:0 4px 18px rgba(124,92,255,.35)}
+  #yes:hover{transform:translateY(-2px);box-shadow:0 8px 26px rgba(124,92,255,.5)}
+  #no{background:#fff;color:#c22a20;border:3px solid #c22a20;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+  #no:hover{transform:none}
+  #no.fleeing{position:fixed;margin:0;z-index:6}
+  #yes:focus-visible,#no:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+  .taunt{min-height:1.5em;font-size:.98rem;font-style:italic;color:var(--muted);opacity:0;transition:opacity .25s}
+  .taunt.show{opacity:1}
+  .score{
+    position:fixed;left:50%;bottom:1.3rem;transform:translateX(-50%);
+    z-index:5;font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--muted);
+    background:rgba(15,18,44,.55);border:1px solid rgba(155,151,196,.25);
+    border-radius:999px;padding:.55rem 1.3rem;backdrop-filter:blur(8px);
+    opacity:0;transition:opacity .3s;white-space:nowrap;
+  }
+  .score.show{opacity:1}
+  .success{
+    position:fixed;inset:0;z-index:10;display:none;
+    flex-direction:column;align-items:center;justify-content:center;
+    gap:1.3rem;padding:2rem;text-align:center;background:var(--bg);
+  }
+  .success.show{display:flex}
+  .success .blob2{
+    position:absolute;inset:0;pointer-events:none;
+    background:
+      radial-gradient(21rem 21rem at var(--mx) var(--my),
+        hsl(var(--hue) 75% 28% / .85) 0%, transparent 70%),
+      radial-gradient(120% 90% at 50% 42%, transparent 55%, rgba(4,6,18,.55) 100%);
+  }
+  .success .peek{position:relative;opacity:1;transform:none;animation:pop .55s cubic-bezier(.2,1.6,.4,1) both}
+  @keyframes pop{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+  .success h2{
+    position:relative;margin:0;font-weight:700;
+    font-size:clamp(2rem,5.6vw,3.6rem);letter-spacing:-.02em;
+  }
+  .success p{position:relative;margin:0;color:var(--muted);font-size:1.06rem;line-height:1.55;max-width:44ch}
+  .success .stamp{
+    position:relative;margin-top:.6rem;
+    font-size:.74rem;letter-spacing:.24em;text-transform:uppercase;
+    color:var(--muted);border:1.5px solid var(--muted);border-radius:6px;
+    padding:.55rem 1.1rem;transform:rotate(-3deg);
+  }
+  #fx{position:fixed;inset:0;width:100%;height:100%;z-index:11;pointer-events:none}
+  @media (prefers-reduced-motion:reduce){
+    /* csak a magától járó, dekoratív animációkat állítjuk le;
+       a görgetéshez kötött mozgást a JS finomítja */
+    .arrow{animation:none}
+    .success .peek{animation:none}
+  }
+</style>
+
+<canvas id="sky"></canvas>
+<div class="blob"></div>
+<div class="grain"></div>
+<div class="vignette"></div>
+
+<main>
+  <section class="intro">
+    <h1>Mielőtt kérdeznék valamit…</h1>
+    <p>…nézzünk vissza pár pillanatot. Görgess!</p>
+    <div class="arrow" aria-hidden="true"></div>
+  </section>
+
+  <section class="scene">
+    <div class="hold"><div class="card">
+      <div class="tv">
+        <img class="shot" src="lepcso.jpg" alt="Közös emlék a lépcsőn">
+        <div class="knobs"><i></i><i></i></div>
+        <div class="legs"><i></i><i></i></div>
+      </div>
+      <div class="label">Adásban: mi</div>
+    </div></div>
+  </section>
+
+  <section class="scene">
+    <div class="hold"><div class="card">
+      <div class="phone">
+        <img class="shot" src="idk.jpg" alt="Esti pillanat a teraszon">
+      </div>
+      <div class="label">Háttérképnek való</div>
+    </div></div>
+  </section>
+
+  <section class="scene">
+    <div class="hold"><div class="card">
+      <div class="camera">
+        <img class="shot" src="melo.jpg" alt="Kártyaparti a parton">
+      </div>
+      <div class="label">Éles kép, éles parti</div>
+    </div></div>
+  </section>
+
+  <section class="scene">
+    <div class="hold"><div class="card">
+      <div class="polaroid">
+        <img class="shot" src="csaladi.jpg" alt="Ölelés a kertben">
+        <div class="scribble">ezt bekereteztem ✎</div>
+      </div>
+      <div class="label">Azonnal előhívva</div>
+    </div></div>
+  </section>
+
+  <section class="scene">
+    <div class="hold"><div class="card">
+      <div class="mirror">
+        <img class="shot" src="tukor.jpg" alt="Tükörszelfi hármasban">
+      </div>
+      <div class="label">Tükröm, tükröm…</div>
+    </div></div>
+  </section>
+
+  <section class="finale" id="finale">
+    <div class="peek">
+      <div class="peekcut"><img src="golden.jpg" alt="Kiskutya kandikál a párkány mögül"></div>
+      <div class="ledge"></div>
+    </div>
+    <div class="caption">Ő is kíváncsi a válaszra</div>
+    <h2>Eljönnél velem randizni?</h2>
+    <p class="sub">Mielőtt válaszolsz: gondolj arra, hogy ez a kutya milyen szemekkel néz most rád. Nincs nyomás.</p>
+    <div class="buttons">
+      <button id="yes">Igen</button>
+      <button id="no">Nem</button>
+    </div>
+    <div class="taunt" id="taunt"></div>
+  </section>
+</main>
+
+<div class="score" id="score"></div>
+
+<div class="success" id="success">
+  <div class="blob2"></div>
+  <div class="peek">
+    <div class="peekcut"><img src="golden.jpg" alt="A kiskutya boldogan vár a párkánynál"></div>
+    <div class="ledge"></div>
+  </div>
+  <h2>Nem igazán volt más lehetőséged😆</h2>
+  <p>Hívj fel és beszéljük meg, hogy melyik napra tegyük</p>
+   <p>+36 20 270 4009</p>
+  <div class="stamp">Hivatalosan is randi &middot; pecsét: vau</div>
+</div>
+<canvas id="fx"></canvas>
+
+<script>
+  const root = document.documentElement;
+  const DPR = Math.min(2, devicePixelRatio || 1);
+
+  // — csillagos ég —
+  const sky = document.getElementById('sky'), sctx = sky.getContext('2d');
+  let SW, SH;
+  const sfit = () => { SW = sky.width = innerWidth * DPR; SH = sky.height = innerHeight * DPR; };
+  addEventListener('resize', sfit); sfit();
+  const stars = Array.from({ length: 110 }, () => ({
+    x: Math.random(), y: Math.random(),
+    r: Math.random() * 1.5 + .4, p: Math.random() * Math.PI * 2,
+    s: .4 + Math.random() * .9, depth: .4 + Math.random() * .6
+  }));
+
+  let tx = innerWidth / 2, ty = innerHeight * .4, x = tx, y = ty, idle = true, t = 0;
+  addEventListener('pointermove', e => { tx = e.clientX; ty = e.clientY; idle = false; });
+
+  // — görgetésvezérelt 3D jelenetek —
+  const cards = [...document.querySelectorAll('.scene')].map((sc, i) => ({
+    sc, card: sc.querySelector('.card'), dir: i % 2 ? -1 : 1
+  }));
+  const finale = document.getElementById('finale');
+  const clamp01 = v => Math.max(0, Math.min(1, v));
+  const ease = q => q * q * (3 - 2 * q); // smoothstep
+  const K = 1; // a görgetéshez kötött 3D mindig aktív (felhasználó vezérli)
+  function drive() {
+    const dx = (x / innerWidth - .5), dy = (y / innerHeight - .5);
+    for (const { sc, card, dir } of cards) {
+      const r = sc.getBoundingClientRect();
+      if (r.bottom < -100 || r.top > innerHeight + 100) { card.style.opacity = 0; continue; }
+      const total = r.height - innerHeight;
+      const p = clamp01(-r.top / total); // 0..1 a jeleneten belül
+      let o, ty2, tz, ry, rx, rz;
+      if (p < .32) {           // térből befordulva érkezik
+        const q = ease(p / .32);
+        o = q;
+        tz = (1 - q) * -520 * K;
+        ry = dir * (1 - q) * 65 * K;
+        rx = (1 - q) * 18 * K;
+        rz = dir * (1 - q) * -7 * K;
+        ty2 = (1 - q) * 90;
+      } else if (p < .68) {    // megtapad, és a kurzor felé billen
+        o = 1; tz = 0; ty2 = 0; rz = 0;
+        ry = dx * 14 * K;
+        rx = -dy * 10 * K;
+      } else {                 // átfordulva kizuhan a térből
+        const q = ease((p - .68) / .32);
+        o = 1 - q;
+        tz = q * 260 * K;
+        ry = -dir * q * 55 * K;
+        rx = -q * 14 * K;
+        rz = -dir * q * 6 * K;
+        ty2 = -q * 70;
+      }
+      card.style.opacity = o;
+      card.style.transform =
+        `perspective(1100px) translate3d(0, ${ty2}px, ${tz}px) rotateY(${ry}deg) rotateX(${rx}deg) rotateZ(${rz}deg)`;
+    }
+    const fr = finale.getBoundingClientRect();
+    const wasOn = finale.classList.contains('on');
+    const isOn = fr.top < innerHeight * .55;
+    finale.classList.toggle('on', isOn);
+    // ha visszagörget a kérdés fölé, az Igen/Nem visszaáll alaphelyzetbe
+    if (wasOn && !isOn) resetAnswer();
+  }
+
+  (function follow() {
+    t += .016;
+    if (idle) {
+      tx = innerWidth / 2 + Math.cos(t * .5) * innerWidth * .25;
+      ty = innerHeight * .4 + Math.sin(t * .7) * innerHeight * .18;
+    }
+    x += (tx - x) * .08; y += (ty - y) * .08;
+    root.style.setProperty('--mx', x + 'px');
+    root.style.setProperty('--my', y + 'px');
+    root.style.setProperty('--hue', Math.round(220 + (x / innerWidth) * 60 + (y / innerHeight) * 20));
+    sctx.clearRect(0, 0, SW, SH);
+    const ox = (x / innerWidth - .5), oy = (y / innerHeight - .5);
+    for (const st of stars) {
+      const tw = .35 + .65 * Math.abs(Math.sin(t * st.s + st.p));
+      sctx.globalAlpha = tw * .8;
+      sctx.fillStyle = '#dcd6f7';
+      sctx.beginPath();
+      sctx.arc((st.x - ox * .03 * st.depth) * SW, (st.y - oy * .03 * st.depth) * SH, st.r * DPR, 0, 7);
+      sctx.fill();
+    }
+    sctx.globalAlpha = 1;
+    drive(); // 3D jelenetek frissítése minden képkockán
+    requestAnimationFrame(follow);
+  })();
+
+  // — a Nem gomb esete a valósággal —
+  const no = document.getElementById('no'), yes = document.getElementById('yes');
+  const taunt = document.getElementById('taunt'), score = document.getElementById('score');
+  const labels = ['Nem', 'Biztos?', 'Tényleg?', 'Gondold át!', 'A kutya látja ám!', 'Ejnye.', 'Jó, futok tovább', 'Nem fáradsz még?', 'Én bírom szusszal', 'Add fel szépen'];
+  const taunts = [
+    'Hoppá. Mintha elmozdult volna.',
+    'Fura. Ez a gomb sosem volt jó a helybenmaradásban.',
+    'A gomb jogi képviselője szerint kattintás nem történt.',
+    'Statisztika: a Nem gombot még senki sem találta el.',
+    'A kutya jegyzetel. Nem néz ki jól a dolog.',
+    'Ez már sport. Nevezzünk be az olimpiára?',
+    'A gomb közleményt adott ki: „inkább az Igent ajánlom”.',
+    'Tipp: a másik gomb nem menekül. Csak mondom.',
+  ];
+  let dodges = 0;
+  function flee() {
+    dodges++;
+    if (!no.classList.contains('fleeing')) no.classList.add('fleeing');
+    const pad = 24, bw = no.offsetWidth, bh = no.offsetHeight;
+    no.style.left = (pad + Math.random() * (innerWidth - bw - pad * 2)) + 'px';
+    no.style.top = (pad + Math.random() * (innerHeight - bh - pad * 2)) + 'px';
+    const shrink = Math.max(.8, 1 - dodges * .03);
+    no.style.fontSize = (1.08 * shrink) + 'rem';
+    no.style.padding = (.95 * shrink) + 'rem ' + (2.5 * shrink) + 'rem';
+    no.textContent = labels[Math.min(dodges, labels.length - 1)];
+    taunt.textContent = '„' + taunts[Math.min(dodges - 1, taunts.length - 1)] + '”';
+    taunt.classList.add('show');
+    score.textContent = 'Szökési kísérletek: ' + dodges + ' · Sikeres Nem-kattintások: 0';
+    score.classList.add('show');
+  }
+  function resetAnswer() {
+    dodges = 0;
+    no.classList.remove('fleeing');
+    no.removeAttribute('style');   // vissza a helyére: pozíció, méret, padding
+    no.textContent = 'Nem';
+    taunt.textContent = '';
+    taunt.classList.remove('show');
+    score.classList.remove('show');
+  }
+  no.addEventListener('pointerenter', flee);
+  no.addEventListener('pointerdown', e => { e.preventDefault(); flee(); });
+  no.addEventListener('click', e => e.preventDefault());
+  addEventListener('pointermove', e => {
+    if (no.style.display === 'none' || !no.classList.contains('fleeing')) return;
+    const r = no.getBoundingClientRect();
+    if (e.clientX > r.left - 12 && e.clientX < r.right + 12 &&
+        e.clientY > r.top - 12 && e.clientY < r.bottom + 12) flee();
+  });
+
+  // — Igen: konfetti —
+  const fx = document.getElementById('fx'), fctx = fx.getContext('2d');
+  let W, H; const ffit = () => {
+    const r = fx.getBoundingClientRect();
+    const w = r.width || innerWidth || document.documentElement.clientWidth || screen.width;
+    const h = r.height || innerHeight || document.documentElement.clientHeight || screen.height;
+    W = fx.width = w * DPR;
+    H = fx.height = h * DPR;
+  };
+  addEventListener('resize', ffit); ffit();
+  // — tűzijáték —
+  const reduced = matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const parts = [];        // rakéták + szikrák egy tömbben
+  const GRAV = .045 * DPR; // gravitáció
+  let running = false;
+
+  function launch() {
+    if (!W || !H) return;          // méret nélkül nincs mit indítani
+    const x = W * (.16 + Math.random() * .68);
+    parts.push({
+      kind: 'rocket',
+      x, y: H, px: x, py: H,
+      vx: (Math.random() - .5) * 1.1 * DPR,
+      vy: -(9.5 + Math.random() * 3.2) * DPR,
+      hue: Math.floor(Math.random() * 360),
+      apex: H * (.14 + Math.random() * .3)   // itt robban legkésőbb
+    });
+  }
+
+  function explode(x, y, hue) {
+    const n = 56 + (Math.random() * 40 | 0);
+    const power = (3.4 + Math.random() * 3) * DPR;
+    const ring = Math.random() < .35;        // néha szabályos gyűrű
+    for (let i = 0; i < n; i++) {
+      const ang = (i / n) * Math.PI * 2 + Math.random() * .15;
+      const sp = ring ? power : power * (.35 + Math.random() * .8);
+      parts.push({
+        kind: 'spark',
+        x, y, px: x, py: y,
+        vx: Math.cos(ang) * sp,
+        vy: Math.sin(ang) * sp,
+        hue: hue + (Math.random() * 46 - 23),
+        life: 1,
+        decay: .009 + Math.random() * .012,
+        flick: Math.random() < .25          // csillámló szikrák
+      });
+    }
+  }
+
+  function frame() {
+    fctx.clearRect(0, 0, W, H);
+    fctx.globalCompositeOperation = 'lighter';
+    fctx.lineCap = 'round';
+    for (let i = parts.length - 1; i >= 0; i--) {
+      const p = parts[i];
+      p.px = p.x; p.py = p.y;
+      if (p.kind === 'rocket') {
+        p.x += p.vx; p.y += p.vy; p.vy += GRAV;
+        // fényes felszálló csóva
+        fctx.strokeStyle = `hsl(${p.hue} 90% 72%)`;
+        fctx.lineWidth = 2.4 * DPR;
+        fctx.beginPath(); fctx.moveTo(p.px, p.py); fctx.lineTo(p.x, p.y); fctx.stroke();
+        if (p.vy >= -1 * DPR || p.y <= p.apex) { explode(p.x, p.y, p.hue); parts.splice(i, 1); }
+      } else {
+        p.x += p.vx; p.y += p.vy;
+        p.vx *= .985; p.vy = p.vy * .985 + GRAV;
+        p.life -= p.decay;
+        if (p.life <= 0) { parts.splice(i, 1); continue; }
+        const a = p.flick ? p.life * (.4 + Math.random() * .6) : p.life;
+        fctx.globalAlpha = Math.max(0, a);
+        fctx.strokeStyle = `hsl(${p.hue} 95% ${58 + p.life * 20}%)`;
+        fctx.lineWidth = (1 + p.life * 2.4) * DPR;
+        fctx.beginPath(); fctx.moveTo(p.px, p.py); fctx.lineTo(p.x, p.y); fctx.stroke();
+      }
+    }
+    fctx.globalAlpha = 1;
+    fctx.globalCompositeOperation = 'source-over';
+    if (parts.length || running) requestAnimationFrame(frame);
+    else fctx.clearRect(0, 0, W, H);
+  }
+
+  function burst() {
+    ffit();               // biztos, ami biztos: a vászon a valós mérethez igazodik
+    // nyitó szalvó
+    const opener = reduced ? 3 : 6;
+    for (let i = 0; i < opener; i++) setTimeout(launch, i * 120);
+    running = true;
+    requestAnimationFrame(frame);
+    // csökkentett mozgásnál is legyen egy rövid, szolid tűzijáték
+    if (reduced) { setTimeout(() => { running = false; }, 1600); return; }
+    // folyamatos tűzijáték kb. 6 másodpercig, majd kifullad
+    const iv = setInterval(() => {
+      launch();
+      if (Math.random() < .35) setTimeout(launch, 90);
+    }, 420);
+    setTimeout(() => { clearInterval(iv); running = false; }, 6000);
+  }
+  yes.addEventListener('click', () => {
+    no.style.display = 'none'; score.style.display = 'none';
+    document.getElementById('success').classList.add('show');
+    document.body.style.overflow = 'hidden';
+    burst();
+  });
+</script>
